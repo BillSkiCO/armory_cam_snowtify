@@ -1,20 +1,7 @@
 import subprocess
-import time
-
-import cv2 as cv
+import constant
+import cv2
 import numpy as np
-
-STREAM_URL = 'https://tower.armorycam.com/stream/armorystream.m3u8'
-FFMPEG = '/usr/bin/ffmpeg'
-
-FFMPEG_COMMAND = [FFMPEG, '-i', STREAM_URL,
-                  '-loglevel', 'quiet',  # no text output
-                  '-an',  # disable audio
-                  '-f', 'image2pipe',
-                  '-pix_fmt', 'bgr24',
-                  '-vcodec', 'rawvideo', '-',
-                  ]
-
 
 class ArmoryCamStream(object):
     width = 1920
@@ -23,16 +10,19 @@ class ArmoryCamStream(object):
 
     def __init__(self):
         self._proc = subprocess.Popen(
-            FFMPEG_COMMAND,
+            constant.FFMPEG_COMMAND,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
         )
 
+    # Define custom iterator for CamStream object that will grab a new frame each
+    # step
     def __next__(self):
         raw_bytes = self._proc.stdout.read(self.height * self.width * self.channels)
         return np.frombuffer(raw_bytes, dtype=np.uint8).reshape((self.height, self.width, self.channels))
 
-    # python2 is still a thing
+    # Calling ArmoryCamStream.next() will have same functionality as
+    # ArmoryCamStream.__next__()
     next = __next__
 
     def __iter__(self):
@@ -50,8 +40,8 @@ class ArmoryCamStream(object):
 
 class FileStream(object):
     def __init__(self, filepath, offset=0):
-        self._capture = cv.VideoCapture(filepath)
-        self._capture.set(cv.CAP_PROP_POS_FRAMES, offset)
+        self._capture = cv2.VideoCapture(filepath)
+        self._capture.set(cv2.CAP_PROP_POS_FRAMES, offset)
 
     def close(self):
         self._capture.release()
