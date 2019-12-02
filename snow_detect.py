@@ -28,7 +28,7 @@ def main(filename=None, offset_frames=0):
 
     with stream:
         stream = resize(stream, scale=.5)
-        stream = blur(stream, kernel_size=1)
+        stream = blur(stream, kernel_size=3)
 
         # Use custom built iterator in ArmoryCamStream object to keep grabbing
         # frames from the video

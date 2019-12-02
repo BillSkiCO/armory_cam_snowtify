@@ -1,22 +1,38 @@
 import cv2 as cv
 import numpy as np
+import collections
+import statistics
+import constant
 
-
+# Impulse control
+# Control change in matches over time.
+# Decay the number of matches by constant.IMPULSE_DECAY every frame
+# and see if the number of matches can keep the average high.
+# Decay argument will be the controlling variable
+# Decay may change over the course of the day, might have to set based on time
 class QParam(object):
-    def __init__(self, min=0, max=255, decay=1):
+    def __init__(self, min=0, max=255, decay=constant.IMPULSE_DECAY):
         self.value = 0
         self.min = min
         self.max = max
-        self.decay = decay
+        self.decay = decay  # Decay of num keypoints matched per frame
 
+    # Lightweight impulse response function
     def update(self, keypoints):
-        # TODO: this is just a hack for right now,
-        #       we need a more robust impulse response function
 
-        # when value is large, growth is slowed
-        growth = (len(keypoints) * 16) / max(self.value, 1)
+        last_average = len(keypoints) + self.value / 2
+
+        print(last_average)
+
+
+        growth = (len(keypoints)) / max(self.value, 1)  # Get growth percent of max
         delta = growth - self.decay
         self.value = int(min(max(self.value + delta, self.min), self.max))
+        # if self.value > constant.IMPULSE_DECAY:
+        #     print(self.value)
+
+        # Return snow confidence level
+        return self.value
 
 
 class SnowDetector(object):
@@ -26,13 +42,13 @@ class SnowDetector(object):
         params = cv.SimpleBlobDetector_Params()
 
         # Change thresholds
-        params.minThreshold = 5
-        params.maxThreshold = 20
+        params.minThreshold = 4
+        params.maxThreshold = 200
 
         # Filter by Area.
         params.filterByArea = True
-        params.minArea = 9
-        params.maxArea = 10
+        params.minArea = 2
+        params.maxArea = 20
 
         # Filter by Circularity
         params.filterByCircularity = False
@@ -60,7 +76,7 @@ class SnowDetector(object):
 
         # MARK: Define polygons of interest.
         poly_region1 = np.array([[(0, 84), (260, 130), (260, 170), (0,274)]], dtype=np.int32)
-        poly_region2 = np.array([[(440, 0), (650, 0), (650,250),(510, 250)]], dtype=np.int32)
+        poly_region2 = np.array([[(440, 0), (650, 0), (650, 250), (510, 250)]], dtype=np.int32)
 
         # fill the  so it doesn't get wiped out when the mask is applied
         channel_count = frame.shape[2]
@@ -79,7 +95,7 @@ class SnowDetector(object):
         params = self._get_blob_detector_params()
         self._blob_detector = cv.SimpleBlobDetector_create(params)
         self._q_param = QParam()
-        self._debug_mask = False
+        self._debug_mask = None
         self._debug_keypoints = None
 
     def detect(self, frame):
@@ -87,15 +103,16 @@ class SnowDetector(object):
         frame = self._mask_out_areas(frame)
 
         fgmask = self._background_subtractor.apply(frame)
-        fgmask[fgmask < 255] = 0
+        #fgmask[fgmask < 255] = 0
 
         self._debug_mask = fgmask
 
         keypoints = self._blob_detector.detect(fgmask)
 
-        if keypoints:
-            print(keypoints)
+        # if keypoints:
+        #     print(keypoints)
 
         self._debug_keypoints = keypoints
         self._q_param.update(keypoints)
         return self._q_param.value
+        #return len(keypoints)
