@@ -19,17 +19,11 @@ class QParam(object):
 
     # Lightweight impulse response function
     def update(self, keypoints):
-
-        last_average = len(keypoints) + self.value / 2
-
-        print(last_average)
-
-
-        growth = (len(keypoints)) / max(self.value, 1)  # Get growth percent of max
+        growth = (len(keypoints)*8) / max(self.value, 1)  # Get growth percent of max
         delta = growth - self.decay
         self.value = int(min(max(self.value + delta, self.min), self.max))
-        # if self.value > constant.IMPULSE_DECAY:
-        #     print(self.value)
+        if self.value > constant.IMPULSE_DECAY:
+             print(self.value)
 
         # Return snow confidence level
         return self.value
@@ -42,7 +36,7 @@ class SnowDetector(object):
         params = cv.SimpleBlobDetector_Params()
 
         # Change thresholds
-        params.minThreshold = 4
+        params.minThreshold = 5
         params.maxThreshold = 200
 
         # Filter by Area.
@@ -75,8 +69,11 @@ class SnowDetector(object):
         mask = np.zeros(frame.shape, dtype=np.uint8)
 
         # MARK: Define polygons of interest.
-        poly_region1 = np.array([[(0, 84), (260, 130), (260, 170), (0,274)]], dtype=np.int32)
-        poly_region2 = np.array([[(440, 0), (650, 0), (650, 250), (510, 250)]], dtype=np.int32)
+        # poly_region1 = np.array([[(0, 84), (260, 130), (260, 170), (0,274)]], dtype=np.int32)
+        # poly_region2 = np.array([[(440, 0), (650, 0), (650, 250), (510, 250)]], dtype=np.int32)
+
+        poly_region1 = np.array([[(0, 42), (130, 65), (130, 85), (0,137)]], dtype=np.int32)
+        poly_region2 = np.array([[(220, 0), (325, 0), (325, 125), (255, 125)]], dtype=np.int32)
 
         # fill the  so it doesn't get wiped out when the mask is applied
         channel_count = frame.shape[2]
@@ -103,7 +100,7 @@ class SnowDetector(object):
         frame = self._mask_out_areas(frame)
 
         fgmask = self._background_subtractor.apply(frame)
-        #fgmask[fgmask < 255] = 0
+        fgmask[fgmask < 255] = 0
 
         self._debug_mask = fgmask
 

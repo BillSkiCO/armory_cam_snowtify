@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import constant as c
+import time
 
 from detect import SnowDetector
 from stream import ArmoryCamStream, FileStream
@@ -9,7 +10,7 @@ from filter import blur, resize
 
 def main(filename=None, offset_frames=0):
 
-    # Set up view and mask output windows
+    #Set up view and mask output windows
     cv.namedWindow('view', cv.WINDOW_NORMAL)
     cv.namedWindow('mask', cv.WINDOW_NORMAL)
     cv.resizeWindow('view', c.FrameSize.WIDTH.value, c.FrameSize.HEIGHT.value)
@@ -27,33 +28,39 @@ def main(filename=None, offset_frames=0):
         stream = ArmoryCamStream()
 
     with stream:
-        stream = resize(stream, scale=.5)
+        stream = resize(stream, scale=.25)
         stream = blur(stream, kernel_size=3)
 
         # Use custom built iterator in ArmoryCamStream object to keep grabbing
         # frames from the video
+        frame_hop = 0
         for frame in stream:
 
-            snow_confidence = detector.detect(frame)
+                if frame_hop % 5 == 0:
+                    snow_confidence = detector.detect(frame)
+                    frame_hop = 0
+                else:
+                    snow_confidence = 0
 
-            displayed = cv.drawKeypoints(frame, detector._debug_keypoints, np.array([]), (0, 0, 255),
-                                         cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+                displayed = cv.drawKeypoints(frame, detector._debug_keypoints, np.array([]), (0, 0, 255),
+                                             cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+                cv.putText(
+                    displayed,
+                    str(snow_confidence),
+                    (40, 30),
+                    font,
+                    1,
+                    (0, 0, 255),
+                    2,
+                    cv.LINE_AA
+                )
 
-            cv.putText(
-                displayed,
-                str(snow_confidence),
-                (40, 30),
-                font,
-                1,
-                (0, 0, 255),
-                2,
-                cv.LINE_AA
-            )
+                cv.imshow('view', displayed)
+                cv.imshow('mask', detector._debug_mask)
+                if cv.waitKey(30) & 0xff == 27:
+                    break
 
-            cv.imshow('view', displayed)
-            cv.imshow('mask', detector._debug_mask)
-            if cv.waitKey(30) & 0xff == 27:
-                break
+                frame_hop += 1
 
 if __name__ == '__main__':
      import argparse
