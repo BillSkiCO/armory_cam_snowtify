@@ -13,6 +13,7 @@ class ArmoryCamStream(object):
             constant.FFMPEG_COMMAND,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
+            shell=True,
         )
 
     # Define custom iterator for CamStream object that will grab a new frame each

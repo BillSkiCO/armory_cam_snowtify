@@ -4,9 +4,10 @@ from enum import Enum
 STREAM_URL = 'http://tower.armorycam.com/stream/armorystream.m3u8'
 #TEST_URL = 'C:/Users/wgolembi/Desktop/armory_analytics/samples/test20.mp4'
 TEST_URL = 'C:/Users/wgolembi/Desktop/armory_analytics/samples/test21.mp4'
-FFMPEG_PATH = os.path.dirname(__file__) + '/ffmpeg-4.2.1/bin/ffmpeg.exe'
+#FFMPEG_PATH = os.path.dirname(__file__) + '/ffmpeg-4.2.1/bin/ffmpeg.exe'
+FFMPEG_PATH = "/usr/bin/ffmpeg"
 
-FFMPEG_COMMAND = [FFMPEG_PATH, '-i', TEST_URL,
+FFMPEG_COMMAND = [FFMPEG_PATH, '-i', STREAM_URL,
                   '-loglevel', 'quiet',  # no text output
                   '-an',  # disable audio
                   '-f', 'image2pipe',
