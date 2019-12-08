@@ -14,6 +14,7 @@ class ArmoryCamStream(object):
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             shell=True,
+            bufsize=400000000,
         )
 
     # Define custom iterator for CamStream object that will grab a new frame each

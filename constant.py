@@ -2,13 +2,13 @@ import os
 from enum import Enum
 
 STREAM_URL = 'http://tower.armorycam.com/stream/armorystream.m3u8'
-#TEST_URL = 'C:/Users/wgolembi/Desktop/armory_analytics/samples/test20.mp4'
-TEST_URL = 'C:/Users/wgolembi/Desktop/armory_analytics/samples/test21.mp4'
+TEST_URL = '/home/wgolembi/aa/armory_analytics/mh.mp4'
 #FFMPEG_PATH = os.path.dirname(__file__) + '/ffmpeg-4.2.1/bin/ffmpeg.exe'
 FFMPEG_PATH = "/usr/bin/ffmpeg"
 
 FFMPEG_COMMAND = [FFMPEG_PATH, '-i', STREAM_URL,
-                  '-loglevel', 'quiet',  # no text output
+                  #'-loglevel', 'quiet',  # no text output
+                  '-r 24',
                   '-an',  # disable audio
                   '-f', 'image2pipe',
                   '-pix_fmt', 'bgr24',
@@ -24,3 +24,5 @@ class FrameSize(Enum):
     #HEIGHT = 540
 
 IMPULSE_DECAY = 5
+
+DEBUG=True

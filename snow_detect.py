@@ -2,6 +2,7 @@ import cv2 as cv
 import numpy as np
 import constant as c
 import time
+import constant
 
 from detect import SnowDetector
 from stream import ArmoryCamStream, FileStream
@@ -11,12 +12,12 @@ from filter import blur, resize
 def main(filename=None, offset_frames=0):
 
     #Set up view and mask output windows
-    cv.namedWindow('view', cv.WINDOW_NORMAL)
-    cv.namedWindow('mask', cv.WINDOW_NORMAL)
-    cv.resizeWindow('view', c.FrameSize.WIDTH.value, c.FrameSize.HEIGHT.value)
-    cv.resizeWindow('mask', c.FrameSize.WIDTH.value, c.FrameSize.HEIGHT.value)
-
-    font = cv.FONT_HERSHEY_SIMPLEX
+    if constant.DEBUG == True:
+        cv.namedWindow('view', cv.WINDOW_NORMAL)
+        cv.namedWindow('mask', cv.WINDOW_NORMAL)
+        cv.resizeWindow('view', c.FrameSize.WIDTH.value, c.FrameSize.HEIGHT.value)
+        cv.resizeWindow('mask', c.FrameSize.WIDTH.value, c.FrameSize.HEIGHT.value)
+        font = cv.FONT_HERSHEY_SIMPLEX
 
     # Initialize detector
     detector = SnowDetector()
@@ -36,12 +37,13 @@ def main(filename=None, offset_frames=0):
         frame_hop = 0
         for frame in stream:
 
-                if frame_hop % 5 == 0:
-                    snow_confidence = detector.detect(frame)
-                    frame_hop = 0
-                else:
-                    snow_confidence = 0
+            if frame_hop % 5 == 0:
+                snow_confidence = detector.detect(frame)
+                frame_hop = 0
+            else:
+                snow_confidence = 0
 
+            if constant.DEBUG == True:
                 displayed = cv.drawKeypoints(frame, detector._debug_keypoints, np.array([]), (0, 0, 255),
                                              cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
                 cv.putText(
@@ -60,7 +62,8 @@ def main(filename=None, offset_frames=0):
                 if cv.waitKey(30) & 0xff == 27:
                     break
 
-                frame_hop += 1
+            frame_hop += 1
+            #time.sleep( 1.0 / 30 )
 
 if __name__ == '__main__':
      import argparse

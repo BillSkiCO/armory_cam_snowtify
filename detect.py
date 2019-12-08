@@ -88,7 +88,7 @@ class SnowDetector(object):
 
 
     def __init__(self):
-        self._background_subtractor = cv.createBackgroundSubtractorMOG2()
+        self._background_subtractor = cv.createBackgroundSubtractorMOG2(detectShadows=False)
         params = self._get_blob_detector_params()
         self._blob_detector = cv.SimpleBlobDetector_create(params)
         self._q_param = QParam()
@@ -96,20 +96,19 @@ class SnowDetector(object):
         self._debug_keypoints = None
 
     def detect(self, frame):
-
         frame = self._mask_out_areas(frame)
-
         fgmask = self._background_subtractor.apply(frame)
         fgmask[fgmask < 255] = 0
 
-        self._debug_mask = fgmask
+        if constant.DEBUG == True:
+            self._debug_mask = fgmask
 
         keypoints = self._blob_detector.detect(fgmask)
 
-        # if keypoints:
-        #     print(keypoints)
-
-        self._debug_keypoints = keypoints
+        if constant.DEBUG == True:
+	        self._debug_keypoints = keypoints
+	        
         self._q_param.update(keypoints)
         return self._q_param.value
-        #return len(keypoints)
+        
+        
