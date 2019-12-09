@@ -2,7 +2,7 @@ import os
 from enum import Enum
 
 STREAM_URL = 'http://tower.armorycam.com/stream/armorystream.m3u8'
-TEST_URL = 'C:/Users/wgolembi/Desktop/armory_analytics/samples/light_to_med_light.mp4'
+TEST_URL = 'C:/Users/wgolembi/Desktop/armory_analytics/samples/test20.mp4'
 #TEST_URL = '/home/wgolembi/aa/armory_analytics/very_light.mp4'
 FFMPEG_PATH = os.path.dirname(__file__) + '/ffmpeg-4.2.1/bin/ffmpeg.exe'
 #FFMPEG_PATH = "/usr/bin/ffmpeg"
@@ -24,9 +24,9 @@ class FrameSize(Enum):
     #WIDTH = 960
     #HEIGHT = 540
 
-IMPULSE_DECAY = 5
+IMPULSE_DECAY = 4
 
-DEBUG=True
+DEBUG = True
 
 NOTIFY_EVENT_WINDOW_SECS = 120       # Time for event window (length of "pseudo circular buffer")
 NOTIFY_THRESHOLD = .5                # % event window filled with snow_events to trigger notification

@@ -114,6 +114,7 @@ class EventWindow(Thread):
                     # IF we haven't hit the threshold yet
                     if self._refractory_timer <= constant.NOTIF_REFRACTORY_SECS:
                         self._refractory_timer += 1
+                print("refractory: " + str(self._refractory_timer))
 
             # else (Circular buffer not filled [Sad!])
             else:
@@ -122,6 +123,7 @@ class EventWindow(Thread):
                     # Reset event handler and increment snow event
                     self._snow_event_handler = False
                     self._snow_events += 1
+                    print("incrementing snow event!")
                 else:
                     self._no_snow_events += 1
 
@@ -137,6 +139,15 @@ class EventWindow(Thread):
         # Add notification to notification queue
         # Just passing value True at this time. Could pass object holding analytics
         notif_q.put(True)
+
+    def reset_vals(self):
+        self._snow_event_handler = False
+        self._snow_events = 0
+        self._no_snow_events = 0
+        self._is_it_snowing = False
+        self._refractory_timer = 0
+
+
 
 
 #
@@ -203,8 +214,16 @@ class Snowtification():
         self._event_thread.start()
 
     def log_snow_event(self):
-        self._event_thread.increment_snow_event()
+        if self._event_thread.is_alive():
+            self._event_thread.increment_snow_event()
 
     def stop_threads(self):
         self._stopFlag.set()
+        notif_q.empty()
 
+    def start_threads(self):
+        notif_q.empty()
+        self._stop_flag.clear()
+        self._notif_thread.start()
+        self._event_thread.start()
+        self._event_thread.reset_vals()

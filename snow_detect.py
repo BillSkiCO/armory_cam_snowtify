@@ -13,12 +13,13 @@ from snowtify import Snowtification
 def main(filename=None, offset_frames=0):
 
     #Set up view and mask output windows
+    cv.namedWindow('view', cv.WINDOW_NORMAL)
+    cv.resizeWindow('view', c.FrameSize.WIDTH.value, c.FrameSize.HEIGHT.value)
+    font = cv.FONT_HERSHEY_SIMPLEX
+
     if constant.DEBUG == True:
-        cv.namedWindow('view', cv.WINDOW_NORMAL)
         cv.namedWindow('mask', cv.WINDOW_NORMAL)
-        cv.resizeWindow('view', c.FrameSize.WIDTH.value, c.FrameSize.HEIGHT.value)
         cv.resizeWindow('mask', c.FrameSize.WIDTH.value, c.FrameSize.HEIGHT.value)
-        font = cv.FONT_HERSHEY_SIMPLEX
 
     # Initialize detector
     detector = SnowDetector()
@@ -41,34 +42,32 @@ def main(filename=None, offset_frames=0):
         frame_hop = 0
         for frame in stream:
 
-            if frame_hop % 5 == 0:
+            if frame_hop % 3 == 0:
                 frame_hop = 0
                 snow_confidence = detector.detect(frame)
 
                 # If we exceed impulse decay we've detected snow. Log it.
-                if snow_confidence > constant.IMPULSE_DECAY:
+                if snow_confidence > constant.IMPULSE_DECAY + 1:
                     snowtify.log_snow_event()
-            else:
-                snow_confidence = 0
 
-            if constant.DEBUG is True:
-                displayed = cv.drawKeypoints(frame, detector._debug_keypoints, np.array([]), (0, 0, 255),
-                                             cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-                cv.putText(
-                    displayed,
-                    str(snow_confidence),
-                    (40, 30),
-                    font,
-                    1,
-                    (0, 0, 255),
-                    2,
-                    cv.LINE_AA
-                )
+            displayed = cv.drawKeypoints(frame, detector._debug_keypoints, np.array([]), (0, 0, 255),
+                                         cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+            cv.putText(
+                displayed,
+                str(snow_confidence),
+                (40, 30),
+                font,
+                1,
+                (0, 0, 255),
+                2,
+                cv.LINE_AA
+            )
 
-                cv.imshow('view', displayed)
+            cv.imshow('view', displayed)
+            if constant.DEBUG == True:
                 cv.imshow('mask', detector._debug_mask)
-                if cv.waitKey(30) & 0xff == 27:
-                    break
+            if cv.waitKey(30) & 0xff == 27:
+                break
 
             frame_hop += 1
 
