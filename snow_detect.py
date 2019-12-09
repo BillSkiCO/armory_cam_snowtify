@@ -7,6 +7,7 @@ import constant
 from detect import SnowDetector
 from stream import ArmoryCamStream, FileStream
 from filter import blur, resize
+from snowtify import Snowtification
 
 
 def main(filename=None, offset_frames=0):
@@ -21,6 +22,9 @@ def main(filename=None, offset_frames=0):
 
     # Initialize detector
     detector = SnowDetector()
+
+    # Initialize Notifications
+    snowtify = Snowtification()
 
     # Read frames from file if provided, otherwise read from live stream
     if filename is not None:
@@ -38,12 +42,16 @@ def main(filename=None, offset_frames=0):
         for frame in stream:
 
             if frame_hop % 5 == 0:
-                snow_confidence = detector.detect(frame)
                 frame_hop = 0
+                snow_confidence = detector.detect(frame)
+
+                # If we exceed impulse decay we've detected snow. Log it.
+                if snow_confidence > constant.IMPULSE_DECAY:
+                    snowtify.log_snow_event()
             else:
                 snow_confidence = 0
 
-            if constant.DEBUG == True:
+            if constant.DEBUG is True:
                 displayed = cv.drawKeypoints(frame, detector._debug_keypoints, np.array([]), (0, 0, 255),
                                              cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
                 cv.putText(
@@ -63,7 +71,6 @@ def main(filename=None, offset_frames=0):
                     break
 
             frame_hop += 1
-            #time.sleep( 1.0 / 30 )
 
 if __name__ == '__main__':
      import argparse

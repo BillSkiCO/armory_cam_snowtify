@@ -1,8 +1,7 @@
 import cv2 as cv
 import numpy as np
-import collections
-import statistics
 import constant
+
 
 # Impulse control
 # Control change in matches over time.
@@ -22,10 +21,8 @@ class QParam(object):
         growth = (len(keypoints)*8) / max(self.value, 1)  # Get growth percent of max
         delta = growth - self.decay
         self.value = int(min(max(self.value + delta, self.min), self.max))
-        if self.value > constant.IMPULSE_DECAY:
-             print(self.value)
 
-        # Return snow confidence level
+        # Return impulse function adjusted value
         return self.value
 
 
@@ -106,7 +103,7 @@ class SnowDetector(object):
         keypoints = self._blob_detector.detect(fgmask)
 
         if constant.DEBUG == True:
-	        self._debug_keypoints = keypoints
+            self._debug_keypoints = keypoints
 	        
         self._q_param.update(keypoints)
         return self._q_param.value
