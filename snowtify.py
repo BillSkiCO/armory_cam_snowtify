@@ -147,9 +147,6 @@ class EventWindow(Thread):
         self._is_it_snowing = False
         self._refractory_timer = 0
 
-
-
-
 #
 # Notification Consumer Thread
 #
@@ -179,16 +176,20 @@ class NotificationThread(Thread):
 
         while success is not True:
 
-            # Send to yo!
-            try:
-                # requests.post("http://api.justyo.co/yo/", data={'api_token': api.YO_API, 'username': api.JOHN_UN,
-                #                                                 'link': 'www.armorycam.com'})
-                requests.post("http://api.justyo.co/yo/", data={'api_token': api.YO_API, 'username': api.BILL_UN,
-                                                                'link': 'www.armorycam.com'})
-                success = True
+            if constant.DEBUG is not True:
+                # Send to yo!
+                try:
+                    requests.post("http://api.justyo.co/yo/", data={'api_token': api.YO_API, 'username': api.JOHN_UN,
+                                                                    'link': 'www.armorycam.com'})
+                    requests.post("http://api.justyo.co/yo/", data={'api_token': api.YO_API, 'username': api.BILL_UN,
+                                                                    'link': 'www.armorycam.com'})
+                    success = True
 
-            except Exception:
-                print("Could not send yo!")
+                except Exception:
+                    print("Could not send yo!")
+            else:
+                print("Notifications Disabled. Debugging Mode")
+                success = True
 
 
 class Snowtification():

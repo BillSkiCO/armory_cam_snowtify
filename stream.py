@@ -2,6 +2,7 @@ import subprocess
 import constant
 import cv2
 import numpy as np
+import exceptions
 
 class ArmoryCamStream(object):
     width = 1920
@@ -20,8 +21,13 @@ class ArmoryCamStream(object):
     # Define custom iterator for CamStream object that will grab a new frame each
     # step
     def __next__(self):
-        raw_bytes = self._proc.stdout.read(self.height * self.width * self.channels)
-        return np.frombuffer(raw_bytes, dtype=np.uint8).reshape((self.height, self.width, self.channels))
+        try:
+            raw_bytes = self._proc.stdout.read(self.height * self.width * self.channels)
+            np_frame = np.frombuffer(raw_bytes, dtype=np.uint8).reshape((self.height, self.width, self.channels))
+        except Exception as e:
+            raise exceptions.StreamError(err_obj=e)
+
+        return np_frame
 
     # Calling ArmoryCamStream.next() will have same functionality as
     # ArmoryCamStream.__next__()
@@ -49,10 +55,12 @@ class FileStream(object):
         self._capture.release()
 
     def __next__(self):
-        success, frame = self._capture.read()
-        if not success:
-            raise StopIteration
-
+        try:
+            success, frame = self._capture.read()
+            if not success:
+                raise exceptions.StreamError(message="Failed Iteration inside of stream.next()")
+        except Exception as e:
+            raise exceptions.StreamError(err_obj=e)
         return frame
 
     next = __next__
@@ -65,3 +73,38 @@ class FileStream(object):
 
     def __exit__(self, *args):
         self.close()
+
+
+# class TwitchStream(object):
+#
+#     ##rtmp://live.twitch.tv/app/live_476885188_WxkaySLxyMMVGrKvu7G0CU3gnK0Jgn
+#
+#     def __init__(self):
+#         def __init__(self):
+#             self._proc = subprocess.Popen(
+#                 constant.FFMPEG_COMMAND,
+#                 stdin=subprocess.PIPE,
+#                 stdout=subprocess.PIPE,
+#                 shell=True,
+#                 bufsize=-1,
+#             )
+#
+#     def close(self):
+#
+#     def __next__(self):
+#         success, frame = self._capture.read()
+#         if not success:
+#             raise StopIteration
+#
+#         return frame
+#
+#     next = __next__
+#
+#     def __iter__(self):
+#         return self
+#
+#     def __enter__(self):
+#         return self
+#
+#     def __exit__(self, *args):
+#         self.close()

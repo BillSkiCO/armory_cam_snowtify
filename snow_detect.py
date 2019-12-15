@@ -3,6 +3,7 @@ import numpy as np
 import constant as c
 import time
 import constant
+import exceptions
 
 from detect import SnowDetector
 from stream import ArmoryCamStream, FileStream
@@ -33,43 +34,47 @@ def main(filename=None, offset_frames=0):
     else:
         stream = ArmoryCamStream()
 
-    with stream:
-        stream = resize(stream, scale=.25)
-        stream = blur(stream, kernel_size=3)
+    try:
+        with stream:
+            stream = resize(stream, scale=.25)
+            stream = blur(stream, kernel_size=3)
 
-        # Use custom built iterator in ArmoryCamStream object to keep grabbing
-        # frames from the video
-        frame_hop = 0
-        for frame in stream:
+            # Use custom built iterator in ArmoryCamStream object to keep grabbing
+            # frames from the video
+            frame_hop = 0
+            for frame in stream:
 
-            if frame_hop % 3 == 0:
-                frame_hop = 0
-                snow_confidence = detector.detect(frame)
+                if frame_hop % 3 == 0:
+                    frame_hop = 0
+                    snow_confidence = detector.detect(frame)
 
-                # If we exceed impulse decay we've detected snow. Log it.
-                if snow_confidence > constant.IMPULSE_DECAY + 1:
-                    snowtify.log_snow_event()
+                    # If we exceed impulse decay we've detected snow. Log it.
+                    if snow_confidence > constant.IMPULSE_DECAY + 1:
+                        snowtify.log_snow_event()
 
-            displayed = cv.drawKeypoints(frame, detector._debug_keypoints, np.array([]), (0, 0, 255),
-                                         cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-            cv.putText(
-                displayed,
-                str(snow_confidence),
-                (40, 30),
-                font,
-                1,
-                (0, 0, 255),
-                2,
-                cv.LINE_AA
-            )
+                displayed = cv.drawKeypoints(frame, detector._debug_keypoints, np.array([]), (0, 0, 255),
+                                             cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+                cv.putText(
+                    displayed,
+                    str(snow_confidence),
+                    (40, 30),
+                    font,
+                    1,
+                    (0, 0, 255),
+                    2,
+                    cv.LINE_AA
+                )
 
-            cv.imshow('view', displayed)
-            if constant.DEBUG == True:
-                cv.imshow('mask', detector._debug_mask)
-            if cv.waitKey(30) & 0xff == 27:
-                break
+                cv.imshow('view', displayed)
+                if constant.DEBUG == True:
+                    cv.imshow('mask', detector._debug_mask)
+                if cv.waitKey(30) & 0xff == 27:
+                    break
 
-            frame_hop += 1
+                frame_hop += 1
+
+    except exceptions.StreamError as e:
+        print(e.message)
 
 if __name__ == '__main__':
      import argparse
