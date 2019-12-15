@@ -143,25 +143,19 @@ class TwitchOutputStream(object):
         command = [
             constant.FFMPEG_PATH,
             '-loglevel', 'verbose',
+            '-i', '/tmp/videopipe',  # The input comes from a pipe
             '-y',  # overwrite previous file/stream
-            '-analyzeduration', '1',
             '-f', 'rawvideo',
             '-r', '24',  # set a fixed frame rate
-            '-vcodec', 'libx264',
+            '-c:v', 'libx264',
             # size of one frame
             '-s', '%dx%d' % (self.width, self.height),
-            '-i', '/tmp/videopipe',  # The input comes from a pipe
             '-an',  # Tells FFMPEG not to expect any audio
             '-b:v', '3000k',
             '-preset', 'faster', '-tune', 'zerolatency',
             '-crf', '23',
             '-pix_fmt', 'yuv420p',
-            '-bufsize', '-1',
             '-g', '48',  # key frame distance
-
-            # MAP THE STREAMS
-            # use only video from first input and only audio from second
-            '-map', '0:v',
 
             # NUMBER OF THREADS
             '-threads', '0',
@@ -180,7 +174,10 @@ class TwitchOutputStream(object):
             command,
             stdin=subprocess.PIPE,
             stderr=devnullpipe,
-            stdout=devnullpipe)
+            stdout=devnullpipe,
+            shell=True,
+            bufsize=-1
+        )
 
     def __enter__(self):
         return self
