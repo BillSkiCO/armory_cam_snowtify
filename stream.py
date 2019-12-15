@@ -140,8 +140,7 @@ class TwitchOutputStream(object):
             except OSError:
                 pass
 
-        command = []
-        command.extend([
+        command = [
             constant.FFMPEG_PATH,
             '-loglevel', 'verbose',
             '-y',  # overwrite previous file/stream
@@ -150,30 +149,28 @@ class TwitchOutputStream(object):
             '-r', '24',  # set a fixed frame rate
             '-vcodec', 'libx264',
             # size of one frame
-            '-s', '%dx%d' % (1920 / 4, 1080 / 4),
-            '-pix_fmt', 'rgb24',  # The input are raw bytes
+            '-s', '%dx%d' % (self.width, self.height),
             '-i', '/tmp/videopipe',  # The input comes from a pipe
             '-an',  # Tells FFMPEG not to expect any audio
-            '-b:v', '3M',
+            '-b:v', '3000k',
             '-preset', 'faster', '-tune', 'zerolatency',
             '-crf', '23',
             '-pix_fmt', 'yuv420p',
-            # '-force_key_frames', r'expr:gte(t,n_forced*2)',
-            '-minrate', '3000k', '-maxrate', '3000k',
-            '-bufsize', '12000k',
+            '-bufsize', '-1',
             '-g', '48',  # key frame distance
-            '-keyint_min', '1',
 
             # MAP THE STREAMS
             # use only video from first input and only audio from second
             '-map', '0:v',
 
             # NUMBER OF THREADS
-            '-threads', '2',
+            '-threads', '0',
 
             # STREAM TO TWITCH
             '-f', 'flv', '%s' % api.TWITCH_STREAM_KEY
-        ])
+        ]
+
+        command = " ".join(command)
 
         devnullpipe = open("/dev/null", "w")  # Throw away stream
 

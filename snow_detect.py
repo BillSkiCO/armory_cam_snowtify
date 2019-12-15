@@ -6,7 +6,7 @@ import constant
 import exceptions
 
 from detect import SnowDetector
-from stream import ArmoryCamStream, FileStream, TwitchOutputStream
+from stream import ArmoryCamStream, FileStream, TwitchBufferedOutputStream
 from filter import blur, resize
 from snowtify import Snowtification
 
@@ -34,7 +34,7 @@ def main(filename=None, offset_frames=0):
     else:
         stream = ArmoryCamStream()
         if constant.STREAMING is True:
-            twitch = TwitchOutputStream()
+            twitch = TwitchBufferedOutputStream()
 
     try:
         with stream:
