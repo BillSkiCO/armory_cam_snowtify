@@ -8,7 +8,7 @@ TEST_URL = 'C:/Users/wgolembi/Desktop/armory_analytics/samples/light_to_med_ligh
 FFMPEG_PATH = "/usr/bin/ffmpeg"
 
 FFMPEG_COMMAND = [FFMPEG_PATH, '-i', STREAM_URL,
-                  '-loglevel', 'trace',  # no text output
+                  '-loglevel', 'verbose',  # no text output
                   '-r 24',
                   '-an',  # disable audio
                   '-f', 'image2pipe',
