@@ -70,8 +70,9 @@ def main(filename=None, offset_frames=0):
                 )
 
                 cv.imshow('view', displayed)
-                if constant.STREAMING is True:
-                    twitch.send_video_frame(displayed)
+                # if constant.STREAMING is True:
+                print("Sending frame to twitch object")
+                twitch.send_video_frame(displayed)
                 if constant.DEBUG == True:
                     cv.imshow('mask', detector._debug_mask)
                 if cv.waitKey(30) & 0xff == 27:
