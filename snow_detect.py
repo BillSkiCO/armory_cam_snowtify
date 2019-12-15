@@ -6,7 +6,7 @@ import constant
 import exceptions
 
 from detect import SnowDetector
-from stream import ArmoryCamStream, FileStream
+from stream import ArmoryCamStream, FileStream, TwitchOutputStream
 from filter import blur, resize
 from snowtify import Snowtification
 
@@ -33,6 +33,8 @@ def main(filename=None, offset_frames=0):
         stream = FileStream(filename, offset=offset_frames)
     else:
         stream = ArmoryCamStream()
+        if constant.STREAMING is True:
+            twitch = TwitchOutputStream()
 
     try:
         with stream:
@@ -66,6 +68,8 @@ def main(filename=None, offset_frames=0):
                 )
 
                 cv.imshow('view', displayed)
+                if constant.STREAMING is True:
+                    twitch.send_video_frame(displayed)
                 if constant.DEBUG == True:
                     cv.imshow('mask', detector._debug_mask)
                 if cv.waitKey(30) & 0xff == 27:
