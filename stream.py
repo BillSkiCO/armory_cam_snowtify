@@ -148,7 +148,6 @@ class TwitchOutputStream(object):
             stdin=subprocess.PIPE,
             stderr=devnullpipe,
             stdout=devnullpipe,
-            shell=True,
             bufsize=-1
         )
 
