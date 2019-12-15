@@ -9,7 +9,7 @@ FFMPEG_PATH = os.path.dirname(__file__) + '/ffmpeg-4.2.1/bin/ffmpeg.exe'
 
 FFMPEG_COMMAND = [FFMPEG_PATH, '-i', STREAM_URL,
                   '-loglevel', 'trace',  # no text output
-                  '-r 24',
+                  #'-r 24',
                   '-an',  # disable audio
                   '-f', 'image2pipe',
                   '-pix_fmt', 'bgr24',
