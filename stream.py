@@ -86,7 +86,7 @@ class FileStream(object):
 
 
 class TwitchOutputStream(object):
-    def __init__(self, width=480, height=270, fps=24, verbose=True):
+    def __init__(self, width=480, height=270, fps=24, verbose=False):
         self.twitch_stream_key = api.TWITCH_STREAM_KEY
         self.width = width
         self.height = height
@@ -123,7 +123,7 @@ class TwitchOutputStream(object):
             '-r', '24',  # set a fixed frame rate
             '-c:v', 'libx264',
             # size of one frame
-            '-s', '%dx%d' % (self.width, self.height),
+            '-s', str(self.width) + 'x' + str(self.height),
             '-an',  # Tells FFMPEG not to expect any audio
             '-b:v', '3000k',
             '-preset', 'fast', '-tune', 'zerolatency',
@@ -178,6 +178,7 @@ class TwitchOutputStream(object):
         frame = np.clip(255 * frame, 0, 255).astype('uint8')
         try:
             os.write(self.video_pipe, frame.tostring())
+            print("Wrote to pipe!")
         except OSError:
             # The pipe has been closed. Reraise and handle it further
             # downstream
