@@ -5,11 +5,11 @@ import time
 import constant
 import exceptions
 
+
 from detect import SnowDetector
-from stream import ArmoryCamStream, FileStream, TwitchBufferedOutputStream
+from stream import ArmoryCamStream, FileStream, TwitchOutputStream
 from filter import blur, resize
 from snowtify import Snowtification
-
 
 def main(filename=None, offset_frames=0):
 
@@ -34,7 +34,7 @@ def main(filename=None, offset_frames=0):
     else:
         stream = ArmoryCamStream()
         if constant.STREAMING is True:
-            twitch = TwitchBufferedOutputStream()
+            twitch = TwitchOutputStream()
 
     try:
         with stream:
@@ -56,6 +56,8 @@ def main(filename=None, offset_frames=0):
 
                 displayed = cv.drawKeypoints(frame, detector._debug_keypoints, np.array([]), (0, 0, 255),
                                              cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+                print(type(displayed))
+
                 cv.putText(
                     displayed,
                     str(snow_confidence),
@@ -76,6 +78,8 @@ def main(filename=None, offset_frames=0):
                     break
 
                 frame_hop += 1
+
+
 
     except exceptions.StreamError as e:
         print(e.message)
