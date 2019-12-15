@@ -56,7 +56,6 @@ def main(filename=None, offset_frames=0):
 
                 displayed = cv.drawKeypoints(frame, detector._debug_keypoints, np.array([]), (0, 0, 255),
                                              cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-                print(type(displayed))
 
                 cv.putText(
                     displayed,
@@ -73,7 +72,7 @@ def main(filename=None, offset_frames=0):
                 # if constant.STREAMING is True:
                 if constant.STREAMING:
                     twitch.send_video_frame(displayed)
-                if constant.DEBUG == True:
+                if constant.DEBUG:
                     cv.imshow('mask', detector._debug_mask)
                 if cv.waitKey(30) & 0xff == 27:
                     break
