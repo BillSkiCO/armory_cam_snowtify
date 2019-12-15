@@ -17,7 +17,7 @@ FFMPEG_COMMAND = [FFMPEG_PATH, '-i', STREAM_URL,
                   ]
 
 FFMPEG_TWITCH = [FFMPEG_PATH, '-f', 'x11grab -s 1920x1200 -framerate 15',
-                 '-i:0.0 -c:v libx264 -preset fast -pix_fmt yuv420p -s 1280x800',
+                 '-i:0.0 -c:v libx264 -preset fast -pix_fmt yuv440p -s 1280x800',
                  '-threads 0 -f flv]'
                  ]
 

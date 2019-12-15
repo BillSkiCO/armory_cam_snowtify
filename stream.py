@@ -120,6 +120,7 @@ class TwitchOutputStream(object):
             '-loglevel', 'info',
             '-i', '/tmp/videopipe',  # The input comes from a pipe
             '-f', 'rawvideo',
+            '-videocodec', 'rawvideo',
             '-r', '24',  # set a fixed frame rate
             '-c:v', 'libx264',
             # size of one frame
