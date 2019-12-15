@@ -25,7 +25,7 @@ def main(filename=None, offset_frames=0):
     # Initialize detector
     detector = SnowDetector()
 
-    # Initialize Notifications
+    # Initialize Snowtification
     snowtify = Snowtification()
 
     # Read frames from file if provided, otherwise read from live stream
