@@ -22,6 +22,7 @@ FFMPEG_TWITCH = [FFMPEG_PATH, '-f', 'x11grab -s 1920x1200 -framerate 15',
                  ]
 
 FFMPEG_TWITCH = " ".join(FFMPEG_TWITCH)
+FFMPEG_COMMAND = " ".join(FFMPEG_COMMAND)
 
 class FrameSize(Enum):
     HEIGHT = 270
