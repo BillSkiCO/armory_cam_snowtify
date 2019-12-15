@@ -33,7 +33,7 @@ class FrameSize(Enum):
 IMPULSE_DECAY = 4
 
 DEBUG = True
-STREAMING = False
+STREAMING = True
 
 NOTIFY_EVENT_WINDOW_SECS = 60        # Time for event window (length of "pseudo circular buffer")
 NOTIFY_THRESHOLD = .5                # % event window filled with snow_events to trigger notification
