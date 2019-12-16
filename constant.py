@@ -14,7 +14,7 @@ FFMPEG_COMMAND = [FFMPEG_PATH, '-i', STREAM_URL,
                   '-f', 'image2pipe',
                   '-pix_fmt', 'bgr24',
                   '-vcodec', 'rawvideo', '-',
-                  '2> /home/Desktop/aa.log',
+                  '| tee /home/Desktop/aa.log',
                   ]
 
 FFMPEG_TWITCH = [FFMPEG_PATH, '-f', 'x11grab -s 1920x1200 -framerate 15',
