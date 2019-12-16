@@ -131,19 +131,23 @@ class EventWindow(Thread):
 
     @staticmethod
     def send_notification():
-
-        print("SEND THE NOTIFICATION!")
+        print("##########################")
+        print("# SEND THE NOTIFICATION! #")
+        print("##########################")
 
         # Add notification to notification queue
         # Just passing value True at this time. Could pass object holding analytics
         notif_q.put(True)
 
-    def reset_vals(self):
-        self._snow_event_handler = False
-        self._snow_events = 0
-        self._no_snow_events = 0
-        self._is_it_snowing = False
-        self._refractory_timer = 0
+    def reset_vals(self, event_handler=False,
+                   snow_events=0, no_snows=0,
+                   snowing=False, refractory=constant.NOTIF_REFRACTORY_SECS):
+
+        self._snow_event_handler = event_handler
+        self._snow_events = snow_events
+        self._no_snow_events = no_snows
+        self._is_it_snowing = snowing
+        self._refractory_timer = refractory
 
 #
 # Notification Consumer Thread

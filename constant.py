@@ -8,12 +8,13 @@ TEST_URL = 'C:/Users/wgolembi/Desktop/armory_analytics/samples/light_to_med_ligh
 FFMPEG_PATH = "/usr/bin/ffmpeg"
 
 FFMPEG_COMMAND = [FFMPEG_PATH, '-i', STREAM_URL,
-                  '-loglevel', 'quiet',  # no text output
+                  '-loglevel', 'verbose',  # no text output
                   '-r 23',
                   '-an',  # disable audio
                   '-f', 'image2pipe',
                   '-pix_fmt', 'bgr24',
                   '-vcodec', 'rawvideo', '-',
+                  '2> /home/Desktop/aa.log',
                   ]
 
 FFMPEG_TWITCH = [FFMPEG_PATH, '-f', 'x11grab -s 1920x1200 -framerate 15',

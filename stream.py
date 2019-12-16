@@ -19,6 +19,9 @@ class ArmoryCamStream(object):
     height = 1080
     channels = 3  # RGB
 
+    #Debug
+    frame_num = 0
+
     def __init__(self):
         self._proc = subprocess.Popen(
             constant.FFMPEG_COMMAND,
@@ -36,6 +39,12 @@ class ArmoryCamStream(object):
             np_frame = np.frombuffer(raw_bytes, dtype=np.uint8).reshape((self.height, self.width, self.channels))
         except Exception as e:
             raise exceptions.StreamError(err_obj=e)
+
+        # Debug
+        self.frame_num += 1
+        if self.frame_num % 25 == 0:
+            print("Hit 25 frames")
+            self.frame_num = 0
 
         return np_frame
 
