@@ -48,8 +48,8 @@ class ArmoryCamStream(object):
                 print("##################################")
                 print("###### SAME FRAME DETECTED #######")
                 print("##################################")
-            print("Restarting ffmpeg")
-            self.restart()
+                print("Restarting ffmpeg")
+                self.restart()
             self.frame_num = 0
             self.last_frame = np_frame
 
