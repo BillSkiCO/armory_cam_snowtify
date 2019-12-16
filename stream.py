@@ -43,12 +43,13 @@ class ArmoryCamStream(object):
 
         # Debug
         self.frame_num += 1
-        if self.frame_num % 25 == 0:
+        if self.frame_num % 100 == 0:
             if np.array_equal(self.last_frame, np_frame):
                 print("##################################")
                 print("###### SAME FRAME DETECTED #######")
                 print("##################################")
-            print("Hit 25 frames")
+            print("Restarting ffmpeg")
+            self.restart()
             self.frame_num = 0
             self.last_frame = np_frame
 
@@ -63,6 +64,16 @@ class ArmoryCamStream(object):
 
     def close(self):
         self._proc.terminate()
+
+    def restart(self):
+        self._proc.terminate()
+        self._proc = subprocess.Popen(
+            constant.FFMPEG_COMMAND,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            shell=True,
+            bufsize=-1,
+        )
 
     def __enter__(self):
         return self

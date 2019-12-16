@@ -14,6 +14,8 @@ from snowtify import Snowtification
 
 def main(filename=None, offset_frames=0, refrac_init=None):
 
+    last_frame = None
+
     #Set up view and mask output windows
     cv.namedWindow('view', cv.WINDOW_NORMAL)
     cv.resizeWindow('view', c.FrameSize.WIDTH.value, c.FrameSize.HEIGHT.value)
@@ -48,7 +50,6 @@ def main(filename=None, offset_frames=0, refrac_init=None):
             for frame in stream:
 
                 if frame_hop % 3 == 0:
-                    frame_hop = 0
                     snow_confidence = detector.detect(frame)
 
                     # If we exceed impulse decay we've detected snow. Log it.
