@@ -18,8 +18,6 @@ class ArmoryCamStream(object):
     width = 1920
     height = 1080
     channels = 3  # RGB
-
-    #Debug
     frame_num = 0
     last_frame = None
 
@@ -41,15 +39,12 @@ class ArmoryCamStream(object):
         except Exception as e:
             raise exceptions.StreamError(err_obj=e)
 
-        # Debug
+        # Check every 100th frame to see if stream is frozen
+        # If stream is frozen, restart ffmpeg
         self.frame_num += 1
         if self.frame_num % 100 == 0:
             if np.array_equal(self.last_frame, np_frame):
-                print("##################################")
-                print("###### SAME FRAME DETECTED #######")
-                print("##################################")
-                print("Restarting ffmpeg")
-                self.restart()
+                self.restart_ffmpeg()
             self.frame_num = 0
             self.last_frame = np_frame
 
@@ -65,8 +60,8 @@ class ArmoryCamStream(object):
     def close(self):
         self._proc.terminate()
 
-    def restart(self):
-        self._proc.terminate()
+    def restart_ffmpeg(self):
+        self.close()
         self._proc = subprocess.Popen(
             constant.FFMPEG_COMMAND,
             stdin=subprocess.PIPE,
@@ -111,7 +106,7 @@ class FileStream(object):
         self.close()
 
 
-class TwitchOutputStream(object):
+class OutputStream(object):
     def __init__(self, width=480, height=270, fps=24, verbose=False):
         self.twitch_stream_key = api.TWITCH_STREAM_KEY
         self.width = width
@@ -137,7 +132,7 @@ class TwitchOutputStream(object):
         if self.ffmpeg_process is not None:
             # Close the previous stream
             try:
-                self.ffmpeg_process.send_signal(signal.SIGINT)
+                self.ffmpeg_process.terminate()
             except OSError:
                 pass
 
