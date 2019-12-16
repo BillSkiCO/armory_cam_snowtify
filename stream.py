@@ -21,6 +21,7 @@ class ArmoryCamStream(object):
 
     #Debug
     frame_num = 0
+    last_frame = None
 
     def __init__(self):
         self._proc = subprocess.Popen(
@@ -43,8 +44,13 @@ class ArmoryCamStream(object):
         # Debug
         self.frame_num += 1
         if self.frame_num % 25 == 0:
+            if self.last_frame == np_frame:
+                print("##################################")
+                print("###### SAME FRAME DETECTED #######")
+                print("##################################")
             print("Hit 25 frames")
             self.frame_num = 0
+            self.last_frame = np_frame
 
         return np_frame
 
