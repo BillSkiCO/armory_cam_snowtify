@@ -59,7 +59,8 @@ def main(filename=None, offset_frames=0, refrac_init=None):
                 displayed = cv.drawKeypoints(frame, detector._debug_keypoints, np.array([]), (0, 0, 255),
                                              cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
-                cv.putText(displayed, str(snow_confidence) + "Events", (40, 30), font, 1, (0, 0, 255), 2, cv.LINE_AA)
+                cv.putText(displayed, "Detects: " + str(snow_confidence), (40, 30), font, 1, (0, 0, 255), 2,
+                           cv.LINE_AA)
 
                 cv.imshow('view', displayed)
                 # if constant.STREAMING is True:
