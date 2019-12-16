@@ -44,7 +44,7 @@ class ArmoryCamStream(object):
         # Debug
         self.frame_num += 1
         if self.frame_num % 25 == 0:
-            if self.last_frame == np_frame:
+            if np.array_equal(self.last_frame, np_frame):
                 print("##################################")
                 print("###### SAME FRAME DETECTED #######")
                 print("##################################")
