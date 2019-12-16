@@ -9,7 +9,7 @@ FFMPEG_PATH = "/usr/bin/ffmpeg"
 
 FFMPEG_COMMAND = [FFMPEG_PATH, '-i', STREAM_URL,
                   '-loglevel', 'quiet',  # no text output
-                  '-r 24',
+                  '-r 23',
                   '-an',  # disable audio
                   '-f', 'image2pipe',
                   '-pix_fmt', 'bgr24',
@@ -32,7 +32,7 @@ class FrameSize(Enum):
 
 IMPULSE_DECAY = 4
 
-DEBUG = True
+DEBUG = False
 STREAMING = False
 
 NOTIFY_EVENT_WINDOW_SECS = 120        # Time for event window (length of "pseudo circular buffer")
