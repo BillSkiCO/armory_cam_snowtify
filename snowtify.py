@@ -28,12 +28,10 @@ class EventWindow(Thread):
     _is_it_snowing = False    # Boolean for is it snowing or not
     _refractory_timer = 0     # How long has it been since it's stopped snowing, after notification
 
-    def __init__(self, event):
+    def __init__(self, event, refrac_init=0):
         Thread.__init__(self)
         self.stopped = event
-
-        # Set refractory period to max to allow for instant notification
-        self._refractory_timer = constant.NOTIF_REFRACTORY_SECS
+        self._refractory_timer = refrac_init
 
     def run(self):
 
@@ -201,14 +199,14 @@ class Snowtification():
     _notif_thread = None
     _event_thread = None
 
-    def __init__(self):
+    def __init__(self, refrac_init):
 
         self._snow_event = False
         self._stopFlag = Event()  # Initialize timer stop flag
 
         # Init Producer/Consumer Threads
         self._notif_thread = NotificationThread(self._stop_flag)
-        self._event_thread = EventWindow(self._stopFlag)
+        self._event_thread = EventWindow(self._stopFlag, refrac_init)
 
         # Start Producer/Consumer Threads
         self._notif_thread.start()

@@ -11,7 +11,8 @@ from stream import ArmoryCamStream, FileStream, TwitchOutputStream
 from filter import blur, resize
 from snowtify import Snowtification
 
-def main(filename=None, offset_frames=0):
+
+def main(filename=None, offset_frames=0, refrac_init=None):
 
     #Set up view and mask output windows
     cv.namedWindow('view', cv.WINDOW_NORMAL)
@@ -26,7 +27,7 @@ def main(filename=None, offset_frames=0):
     detector = SnowDetector()
 
     # Initialize Snowtification
-    snowtify = Snowtification()
+    snowtify = Snowtification(refrac_init)
 
     # Read frames from file if provided, otherwise read from live stream
     if filename is not None:
@@ -84,18 +85,20 @@ def main(filename=None, offset_frames=0):
     except exceptions.StreamError as e:
         print(e.message)
 
+
 if __name__ == '__main__':
-     import argparse
-     import os
+    import argparse
+    import os
 
-     parser = argparse.ArgumentParser()
-     parser.add_argument('--file', '-f', type=str)
-     parser.add_argument('--offset-frames', type=int, default=0)
-     args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--file', '-f', type=str)
+    parser.add_argument('--offset-frames', type=int, default=0)
+    parser.add_argument('--refractory', type=int, default=constant.NOTIF_REFRACTORY_SECS)
+    args = parser.parse_args()
 
-     if args.file is None:
-         filename = None
-     else:
-         filename = os.path.abspath(args.file)
+    if args.file is None:
+        filename = None
+    else:
+        filename = os.path.abspath(args.file)
 
-     main(filename=filename, offset_frames=args.offset_frames)
+    main(filename=filename, offset_frames=args.offset_frames, refrac_init=args.refractory)
