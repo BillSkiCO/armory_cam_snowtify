@@ -42,7 +42,7 @@ class ArmoryCamStream(object):
         # Check every 100th frame to see if stream is frozen
         # If stream is frozen, restart ffmpeg
         self.frame_num += 1
-        if self.frame_num % 100 == 0:
+        if self.frame_num > 99:
             if np.array_equal(self.last_frame, np_frame):
                 self.restart_ffmpeg()
             self.frame_num = 0

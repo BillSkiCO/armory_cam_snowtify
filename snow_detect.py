@@ -49,7 +49,8 @@ def main(filename=None, offset_frames=0, refrac_init=None):
             frame_hop = 0
             for frame in stream:
 
-                if frame_hop % 3 == 0:
+                if frame_hop > 3:
+                    frame_hop = 0
                     snow_confidence = detector.detect(frame)
 
                     # If we exceed impulse decay we've detected snow. Log it.
