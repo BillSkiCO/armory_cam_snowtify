@@ -15,6 +15,7 @@ from snowtify import Snowtification
 def main(filename=None, offset_frames=0, refrac_init=None):
 
     last_frame = None
+    snow_confidence = 0
 
     #Set up view and mask output windows
     cv.namedWindow('view', cv.WINDOW_NORMAL)
