@@ -35,7 +35,7 @@ IMPULSE_DECAY = 4
 DEBUG = False
 STREAMING = False
 
-NOTIFY_EVENT_WINDOW_SECS = 120        # Time for event window (length of "pseudo circular buffer")
+NOTIFY_EVENT_WINDOW_SECS = 120       # Time for event window (length of "pseudo circular buffer")
 NOTIFY_THRESHOLD = .5                # % event window filled with snow_events to trigger notification
 NOT_SNOWING_THRESHOLD = .9           # % event window that needs to be filled with no_snow_events to dictate no snow
-NOTIF_REFRACTORY_SECS = 60 * 60 * 2  # Number of seconds of no snow to reset notification trigger
+NOTIF_REFRACTORY_SECS = 60 * 30      # Number of seconds of no snow to reset notification trigger
