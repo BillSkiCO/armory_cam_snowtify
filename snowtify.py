@@ -201,7 +201,7 @@ class NotificationThread(Thread):
                                       oauth_token_secret=api.TW_OAUTH_TOKEN_SECRET)
 
                     now = datetime.datetime.now()
-                    now = str(now.strftime("%Y-%m-%d %H:%M"))
+                    now = now.strftime("%c")
 
                     os.system("rm -rf /home/mayor/Pictures/current.jpg")
                     os.system("curl https://tower.armorycam.com/ftpuploaduser/FI9821W_C4D655392937/snap/current.jpg > /home/mayor/Pictures/current.jpg")
