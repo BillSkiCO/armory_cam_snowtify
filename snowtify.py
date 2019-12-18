@@ -5,6 +5,9 @@ import constant
 import queue
 import requests
 import api
+from twython import Twython
+import datetime
+import os
 
 # Set shared queue for thread of size 1 to hold notification trigger
 notif_q = queue.Queue(1)
@@ -131,9 +134,9 @@ class EventWindow(Thread):
 
     @staticmethod
     def send_notification():
-        print("##########################")
-        print("# SEND THE NOTIFICATION! #")
-        print("##########################")
+        print("############################")
+        print("# SEND THE SNOWTIFICATION! #")
+        print("############################")
 
         # Add notification to notification queue
         # Just passing value True at this time. Could pass object holding analytics
@@ -171,8 +174,7 @@ class NotificationThread(Thread):
                 self.send_notification(notif_event)
             time.sleep(1)
 
-    @staticmethod
-    def send_notification(notif_event):
+    def send_notification(self, notif_event):
 
         success = False
 
@@ -185,10 +187,33 @@ class NotificationThread(Thread):
                                                                     'link': 'www.armorycam.com'})
                     requests.post("http://api.justyo.co/yo/", data={'api_token': api.YO_API, 'username': api.BILL_UN,
                                                                     'link': 'www.armorycam.com'})
+
+
+                    ####################################
+                    #
+                    #  TWITTER INTEGRATION
+                    #
+                    #####################################
+
+                    twitter = Twython(app_key=api.TW_CUSTOMER_API,
+                                      app_secret=api.TW_PRIV_API,
+                                      oauth_token=api.TW_OAUTH_TOKEN,
+                                      oauth_token_secret=api.TW_OAUTH_TOKEN_SECRET)
+
+                    now = datetime.datetime.now()
+                    now = str(now.strftime("%Y-%m-%d %H:%M"))
+
+                    os.system("rm -rf /home/mayor/Pictures/current.jpg")
+                    os.system("curl https://tower.armorycam.com/ftpuploaduser/FI9821W_C4D655392937/snap/current.jpg > /home/mayor/Pictures/current.jpg")
+
+                    photo = open('/home/mayor/Pictures/current.jpg', 'rb')
+                    image_ids = twitter.upload_media(media=photo)
+                    twitter.update_status(status='It\'s snowing on ArmoryCam.com ❄ Tune in now! [' + now + ']',
+                                          media_ids=[image_ids['media_id']])
                     success = True
 
                 except Exception:
-                    print("Could not send yo!")
+                    print("Could not send update!")
             else:
                 print("Notifications Disabled. Debugging Mode")
                 success = True
