@@ -7,7 +7,7 @@ TEST_URL = 'C:/Users/wgolembi/Desktop/armory_analytics/samples/false_positive.mp
 #FFMPEG_PATH = os.path.dirname(__file__) + '/ffmpeg-4.2.1/bin/ffmpeg.exe'
 FFMPEG_PATH = "/usr/bin/ffmpeg"
 
-FFMPEG_COMMAND = [FFMPEG_PATH, '-i', TEST_URL,
+FFMPEG_COMMAND = [FFMPEG_PATH, '-i', STREAM_URL,
                   '-loglevel', 'quiet',  # no text output
                   '-r 24',
                   '-an',  # disable audio
