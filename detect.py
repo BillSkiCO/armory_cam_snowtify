@@ -28,6 +28,15 @@ class QParam(object):
 
 class SnowDetector(object):
 
+    def __init__(self):
+        self._background_subtractor = cv.createBackgroundSubtractorMOG2(detectShadows=False)
+        params = self._get_blob_detector_params()
+        self._blob_detector = cv.SimpleBlobDetector_create(params)
+        self._q_param = QParam()
+        self._debug_mask = None
+        self._debug_keypoints = None
+        self.detect_counter = 0
+
     @staticmethod
     def _get_blob_detector_params():
         params = cv.SimpleBlobDetector_Params()
@@ -83,17 +92,10 @@ class SnowDetector(object):
 
         return masked_frame
 
-    def __init__(self):
-        self._background_subtractor = cv.createBackgroundSubtractorMOG2(detectShadows=False)
-        params = self._get_blob_detector_params()
-        self._blob_detector = cv.SimpleBlobDetector_create(params)
-        self._q_param = QParam()
-        self._debug_mask = None
-        self._debug_keypoints = None
-
     def detect(self, frame):
         frame = self._mask_out_areas(frame)
-        fgmask = self._background_subtractor.apply(frame)
+
+        fgmask = self._background_subtractor.apply(frame, learningRate=.023)
         fgmask[fgmask < 255] = 0
 
         if constant.DEBUG is True:
@@ -104,5 +106,7 @@ class SnowDetector(object):
         self._debug_keypoints = keypoints
 
         self._q_param.update(keypoints)
+
+        self.detect_counter += 1
         return self._q_param.value
 
